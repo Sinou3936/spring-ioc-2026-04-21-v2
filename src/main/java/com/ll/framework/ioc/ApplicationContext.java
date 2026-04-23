@@ -4,6 +4,7 @@ import com.ll.framework.ioc.annotations.Component;
 import com.ll.framework.ioc.annotations.Configuration;
 import com.ll.framework.ioc.annotations.Repository;
 import com.ll.framework.ioc.annotations.Service;
+import org.reflections.Reflections;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -24,19 +25,12 @@ public class ApplicationContext {
     }
 
     public void init() {
-        String packagePath = basePackage.replace(".","/");
-        ClassLoader classLoader = getClass().getClassLoader();
-        URL resource = classLoader.getResource(packagePath);
-        File directory = new File(resource.getFile());
-        findClassess(directory, basePackage,classes);
+        Reflections reflections = new Reflections(basePackage);
 
-    }
-
-    private boolean isBeanClass(Class<?> clazz){
-        return clazz.isAnnotationPresent(Component.class)
-                || clazz.isAnnotationPresent(Configuration.class)
-                || clazz.isAnnotationPresent(Repository.class)
-                || clazz.isAnnotationPresent(Service.class);
+        classes.addAll(reflections.getTypesAnnotatedWith(Component.class));
+        classes.addAll(reflections.getTypesAnnotatedWith(Configuration.class));
+        classes.addAll(reflections.getTypesAnnotatedWith(Repository.class));
+        classes.addAll(reflections.getTypesAnnotatedWith(Service.class));
     }
 
     private String lowerFirst(String simpleName) {
@@ -68,7 +62,6 @@ public class ApplicationContext {
         }
         for(Class<?> clazz : classes)
         {
-            if(!isBeanClass(clazz)) continue;
             if(parameterType.isAssignableFrom(clazz))
             {
                 String beanName = lowerFirst(clazz.getSimpleName());
@@ -78,31 +71,6 @@ public class ApplicationContext {
         throw new RuntimeException("Bean not found by type : "+ parameterType);
     }
 
-    private void findClassess(File directory, String basePackage, List<Class<?>> classes) {
-        File[] files = directory.listFiles();
-
-        if(files == null) return;
-        for(File file : files){
-            if(file.isDirectory()) {
-                String subPackage = basePackage + "." + file.getName();
-                findClassess(file, subPackage, classes);
-            }
-            else if(file.getName().endsWith(".class"))
-            {
-                String className = file.getName().replace(".class","");
-                String fullClassName = basePackage+"."+className;
-                try{
-                    Class<?> clazz = Class.forName(fullClassName);
-                    if(clazz.getName().contains("domain")){
-                        classes.add(clazz);
-                    }
-                }catch (ClassNotFoundException e){
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-    }
-
     public <T> T genBean(String beanName) {
         if(beans.containsKey(beanName))
         {
@@ -110,7 +78,6 @@ public class ApplicationContext {
         }
         for (Class<?> clazz : classes)
         {
-            if(!isBeanClass(clazz)) continue;;
             String currentBeanName = lowerFirst(clazz.getSimpleName());
 
             if(currentBeanName.equals(beanName))
