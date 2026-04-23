@@ -112,7 +112,8 @@ public class ApplicationContext {
     }
 
     public <T> T genBean(String beanName) {
-        Class<?> clazz = beanDefinitons.get(beanName);
-        return (T) createInstance(clazz);
+//        Class<?> clazz = beanDefinitons.get(beanName);
+//        return (T) createInstance(clazz);
+        return (T) beans.get(beanName);
     }
 }
