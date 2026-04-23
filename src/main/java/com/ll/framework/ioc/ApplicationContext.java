@@ -62,8 +62,8 @@ public class ApplicationContext {
             Object[] args = new Object[parameterTypes.length];
 
             for(int i=0; i<args.length; i++){
-//                args[i] = getBeanByType(parameterTypes[i]);
-                args[i] = null;
+                args[i] = getBeanByType(parameterTypes[i]);
+//                args[i] = null;
             }
 
             return constructor.newInstance(args);
