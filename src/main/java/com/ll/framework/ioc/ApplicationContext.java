@@ -40,7 +40,7 @@ public class ApplicationContext {
             ||clazz.isAnnotationPresent(Service.class)
             ){
                 String beanName = lowerFirst(clazz.getSimpleName());
-//                if(beans.containsKey(beanName)) continue;
+                if(beans.containsKey(beanName)) continue;
                 Object instance = createInstance(clazz);
                 beans.put(beanName,instance);
             }
@@ -81,14 +81,14 @@ public class ApplicationContext {
             }
         }
 
-//        for(Class<?> clazz : classes)
-//        {
-//            if(parameterType.isAssignableFrom(clazz))
-//            {
-//                String beanName = lowerFirst(clazz.getSimpleName());
-//                return genBean(beanName);
-//            }
-//        }
+        for(Class<?> clazz : classes)
+        {
+            if(parameterType.isAssignableFrom(clazz))
+            {
+                String beanName = lowerFirst(clazz.getSimpleName());
+                return genBean(beanName);
+            }
+        }
         return null;
     }
 
@@ -125,17 +125,17 @@ public class ApplicationContext {
         {
             return (T) beans.get(beanName);
         }
-//        for (Class<?> clazz : classes)
-//        {
-//            String currentBeanName = lowerFirst(clazz.getSimpleName());
-//
-//            if(currentBeanName.equals(beanName))
-//            {
-//                Object instance = createInstance(clazz);
-//                beans.put(beanName,instance);
-//                return (T) instance;
-//            }
-//        }
+        for (Class<?> clazz : classes)
+        {
+            String currentBeanName = lowerFirst(clazz.getSimpleName());
+
+            if(currentBeanName.equals(beanName))
+            {
+                Object instance = createInstance(clazz);
+                beans.put(beanName,instance);
+                return (T) instance;
+            }
+        }
         return null;
     }
 }
