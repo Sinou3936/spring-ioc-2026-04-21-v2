@@ -17,6 +17,7 @@ public class ApplicationContext {
 
     private final String basePackage;
     private final Map<String, Object> beans = new HashMap<>();
+    private final Map<String, Class<?>> beanDefinitons = new HashMap<>();
 
     public ApplicationContext(String basePackage) {
         this.basePackage = basePackage;
@@ -111,6 +112,7 @@ public class ApplicationContext {
     }
 
     public <T> T genBean(String beanName) {
-        return (T) beans.get(beanName);
+        Class<?> clazz = beanDefinitons.get(beanName);
+        return (T) createInstance(clazz);
     }
 }
