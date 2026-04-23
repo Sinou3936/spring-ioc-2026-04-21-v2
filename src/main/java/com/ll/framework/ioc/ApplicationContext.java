@@ -37,7 +37,7 @@ public class ApplicationContext {
         {
             if(clazz.isAnnotationPresent(Component.class)
             ||clazz.isAnnotationPresent(Configuration.class)
-//            ||clazz.isAnnotationPresent(Repository.class)
+            ||clazz.isAnnotationPresent(Repository.class)
             ||clazz.isAnnotationPresent(Service.class)
             ){
                 Object instance = createInstance(clazz);
