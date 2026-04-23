@@ -17,7 +17,7 @@ public class ApplicationContext {
 
     private final String basePackage;
     private final Map<String, Object> beans = new HashMap<>();
-    private final Map<String, Class<?>> beanDefinitons = new HashMap<>();
+    private final List<Class<?>> classes = new ArrayList<>();
 
     public ApplicationContext(String basePackage) {
         this.basePackage = basePackage;
@@ -29,7 +29,6 @@ public class ApplicationContext {
         URL resource = classLoader.getResource(packagePath);
 
         File directory = new File(resource.getFile());
-        List<Class<?>> classes = new ArrayList<>();
 
         findClassess(directory, basePackage,classes);
 
@@ -40,8 +39,9 @@ public class ApplicationContext {
             ||clazz.isAnnotationPresent(Repository.class)
             ||clazz.isAnnotationPresent(Service.class)
             ){
-                Object instance = createInstance(clazz);
                 String beanName = lowerFirst(clazz.getSimpleName());
+//                if(beans.containsKey(beanName)) continue;
+                Object instance = createInstance(clazz);
                 beans.put(beanName,instance);
             }
 
@@ -58,12 +58,11 @@ public class ApplicationContext {
         try{
             Constructor<?> constructor = clazz.getDeclaredConstructors()[0];
             Class<?>[] parameterTypes = constructor.getParameterTypes();
-
             Object[] args = new Object[parameterTypes.length];
 
             for(int i=0; i<args.length; i++){
                 args[i] = getBeanByType(parameterTypes[i]);
-//                args[i] = null;
+
             }
 
             return constructor.newInstance(args);
@@ -81,6 +80,15 @@ public class ApplicationContext {
                 return bean;
             }
         }
+
+//        for(Class<?> clazz : classes)
+//        {
+//            if(parameterType.isAssignableFrom(clazz))
+//            {
+//                String beanName = lowerFirst(clazz.getSimpleName());
+//                return genBean(beanName);
+//            }
+//        }
         return null;
     }
 
@@ -113,8 +121,21 @@ public class ApplicationContext {
     }
 
     public <T> T genBean(String beanName) {
-//        Class<?> clazz = beanDefinitons.get(beanName);
-//        return (T) createInstance(clazz);
-        return (T) beans.get(beanName);
+        if(beans.containsKey(beanName))
+        {
+            return (T) beans.get(beanName);
+        }
+//        for (Class<?> clazz : classes)
+//        {
+//            String currentBeanName = lowerFirst(clazz.getSimpleName());
+//
+//            if(currentBeanName.equals(beanName))
+//            {
+//                Object instance = createInstance(clazz);
+//                beans.put(beanName,instance);
+//                return (T) instance;
+//            }
+//        }
+        return null;
     }
 }
