@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+// v2 - IoC 컨테이너 구조 개선 (Blue)
 public class ApplicationContextTest {
     private static ApplicationContext applicationContext;
 
